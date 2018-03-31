@@ -1,0 +1,233 @@
+<?php 
+
+function cari_semester(){
+	date_default_timezone_set('Asia/Jakarta');
+	$bln = date('m');
+	
+	switch ($bln){
+		case 2:
+		case 3:
+		case 4:
+		case 5:
+		case 6:
+		case 7:
+			return "genap";
+			break;
+		case 8: 
+		case 9:
+		case 10:
+		case 11:
+		case 12:
+		case 1:
+			return "ganjil";
+			break;	
+	}
+	
+}
+
+function max_sks($ip){
+	
+	if($ip>=3.00){
+		$sks = 24;
+	}elseif($ip>=2.50){
+		$sks = 22;
+	}elseif($ip>=2.00){
+		$sks = 20;	
+	}elseif($ip>=1.50){
+		$sks = 16;
+	}elseif($ip>=1.00){
+		$sks = 14;
+	}else{
+		$sks = 24;
+	}
+	return $sks;
+	/*
+	switch($ip){
+		case 3.00:
+			return 24;
+			break;
+		case 2.50:
+			return 22;
+			break;
+		case 2.00:
+			return 20;
+			break;	
+		case 1.50:
+			return 16;
+			break;
+		case 1.00:
+			return 14;
+			break;
+		case 0.00:
+			return 12;
+			break;
+	}
+	*/
+			
+}
+
+function cari_th_akademik(){
+	date_default_timezone_set('Asia/Jakarta');
+	$thn = date('Y');
+	$i = 1;
+	$th = $thn-$i;
+	
+	$smt = cari_semester();
+	if($smt=='ganjil'){
+		$ket = 1;
+	}else{
+		$ket = 2;
+	}
+	$hasil = $th.$ket;
+	
+	return $hasil;
+}
+
+/*
+function semester($nim){
+	$id['nim'] = $nim;
+	$q = $this->db->get_where("mahasiswa",$id);
+	$r = $q->num_rows();
+	if($r>0){
+		foreach($q->result() as $dt){
+			$th = substr($dt->th_akademik,0,4);
+			$bln_now = date('m');
+			$th_now = date('Y');
+			$thn = $th_now-$th;
+			if($thn >1 && $bln_now >=2){
+				$smt = ($thn*2)+1;
+			}elseif($thn >1 && $bln_now >=8){
+				$smt = ($thn*2)+2;
+			}else{
+				$smt = 1;
+			}
+		}
+	}else{
+		$smt = 1;
+	}
+	return $smt;
+}
+*/
+function semester($nim,$thak){
+	$id['nim'] = $nim;
+	$q = $this->db->get_where("mahasiswa",$id);
+	$r = $q->num_rows();
+	if($r>0){
+		foreach($q->result() as $dt){
+			date_default_timezone_set('Asia/Jakarta');
+			$th_now = substr($thak,0,4);//date('Y');
+			$th_masuk = substr($dt->th_akademik,0,4);
+			//$smt_masuk = substr($dt->th_akademik,4,1);
+			$smt = substr($thak,4,1);
+			$th = $th_now-$th_masuk;
+			$smt =  ($th*2)+$smt;
+		}
+	}else{
+		$smt = 1;
+	}
+	return $smt;
+}
+//Konversi tanggal
+function tgl_sql($date){
+	$exp = explode('-',$date);
+	if(count($exp) == 3) {
+		$date = $exp[2].'-'.$exp[1].'-'.$exp[0];
+	}
+	return $date;
+}
+
+function tgl_str($date){
+	$exp = explode('-',$date);
+	if(count($exp) == 3) {
+		$date = $exp[2].'-'.$exp[1].'-'.$exp[0];
+	}
+	return $date;
+}
+
+function ambilTgl($tgl){
+	$exp = explode('-',$tgl);
+	$tgl = $exp[2];
+	return $tgl;
+}
+
+function ambilBln($tgl){
+	$exp = explode('-',$tgl);
+	$tgl = $exp[1];
+	$bln = getBulan($tgl);
+	$hasil = substr($bln,0,3);
+	return $hasil;
+}
+
+function tgl_indo($tgl){
+		$jam = substr($tgl,11,10);
+		$tgl = substr($tgl,0,10);
+		$tanggal = substr($tgl,8,2);
+		$bulan = getBulan(substr($tgl,5,2));
+		$tahun = substr($tgl,0,4);
+		return $tanggal.' '.$bulan.' '.$tahun.' '.$jam;		 
+}	
+
+function getBulan($bln){
+	switch ($bln){
+		case 1: 
+			return "Januari";
+			break;
+		case 2:
+			return "Februari";
+			break;
+		case 3:
+			return "Maret";
+			break;
+		case 4:
+			return "April";
+			break;
+		case 5:
+			return "Mei";
+			break;
+		case 6:
+			return "Juni";
+			break;
+		case 7:
+			return "Juli";
+			break;
+		case 8:
+			return "Agustus";
+			break;
+		case 9:
+			return "September";
+			break;
+		case 10:
+			return "Oktober";
+			break;
+		case 11:
+			return "November";
+			break;
+		case 12:
+			return "Desember";
+			break;
+	}
+} 
+
+function hari_ini($hari){
+	date_default_timezone_set('Asia/Jakarta'); // PHP 6 mengharuskan penyebutan timezone.
+	$seminggu = array("Minggu","Senin","Selasa","Rabu","Kamis","Jumat","Sabtu");
+	//$hari = date("w");
+	$hari_ini = $seminggu[$hari];
+	return $hari_ini;
+}
+
+function hari_kuliah(){
+	$q = array('Senin','Selasa','Rabu','Kamis','Jum\'at','Sabtu');
+	return $q;
+}
+
+function jam_kuliah(){
+	$q = array('07.30 - 09.00','09.05 - 10.35','10.40 - 12.20','12.30 - 14.00','14.05 - 15.35','15.40 - 17.10');
+	return $q;
+}
+	
+function ruang_kuliah(){
+	$q = array('R01','R02','R03','R04','R05','R06','R07','R08','R09','R10','R11','R12','R13','R14','R15','R16','R17','R18','R19','R20','R21','R22','R23','R24','R25','R26','R27','R28','R29','R30','R31','R32','R33','R34','R35','R36','R37','R38','R39','R40','R41','R42','R43','R44','R45','R46','R47','R48','R49','R50','Lab');
+	return $q;
+}
+?>
